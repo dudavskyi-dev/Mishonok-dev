@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Для тебя ❤️</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<audio id="music" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="hearts"></canvas>
+
+<div class="container">
+
+    <!-- Ввод имени -->
+    <div id="start" class="step active">
+        <h1>Привет ❤️</h1>
+        <p>Как тебя зовут?</p>
+        <input id="nameInput" placeholder="Введи имя">
+        <button onclick="startGame()">Начать ✨</button>
+    </div>
+
+    <!-- Квест -->
+    <div id="step1" class="step">
+        <p id="text1"></p>
+        <button onclick="next(1)">Дальше →</button>
+    </div>
+
+    <div id="step2" class="step">
+        <p>Ты очень много трудишься?</p>
+        <button onclick="next(2)">угу 😭</button>
+        <button onclick="next(2)">Очень много 😭😭</button>
+    </div>
+
+    <div id="step3" class="step">
+        <p>Что нужно делать, когда устала?😏</p>
+        <button onclick="wrong()">Работать дальше 😅</button>
+        <button onclick="next(3)">Отдыхать!!!!!! 😌</button>
+    </div>
+
+    <div id="step4" class="step">
+        <p>Правильно 💖<br>И у меня есть кое-что для тебя...</p>
+        <button onclick="next(4)">СТО ТАМ ???? 🎁</button>
+    </div>
+
+    <!-- Финал -->
+    <div id="final" class="step">
+        <div id="ticket" class="ticket">
+            <h2>🎁 Сюрприз!</h2>
+            <p id="finalText"></p>
+
+            <img src="massage.jpg">
+
+            <p>Сертификат на массаж 💆‍♀️</p>
+            <p class="small">Использовать ОБЯЗАТЕЛЬНО 😄</p>
+        </div>
+
+        <button onclick="download()">Скачать 🎟️</button>
+    </div>
+
+</div>
+
+<script>
+let name = "";
+
+function startGame() {
+    name = document.getElementById("nameInput").value || "Мышоночек";
+    document.getElementById("text1").innerText = name + ", у меня для тебя небольшой квест 😏";
+
+    show("step1");
+    document.getElementById("music").play();
+}
+
+function next(step) {
+    if (step === 1) show("step2");
+    if (step === 2) show("step3");
+    if (step === 3) show("step4");
+    if (step === 4) {
+        document.getElementById("finalText").innerText =
+            name + ", ты очень много работаешь и заслуживаешь отдых ❤️";
+        show("final");
+    }
+}
+
+function wrong() {
+    alert("Неправильно 😄 Попробуй ещё");
+}
+
+function show(id) {
+    document.querySelectorAll(".step").forEach(el => el.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+// ❤️ сердечки
+const canvas = document.getElementById("hearts");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let hearts = [];
+
+function createHeart() {
+    hearts.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height,
+        size: Math.random() * 5 + 5,
+        speed: Math.random() * 1 + 0.5
+    });
+}
+
+function drawHearts() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    hearts.forEach(h => {
+        ctx.fillStyle = "pink";
+        ctx.beginPath();
+        ctx.arc(h.x, h.y, h.size, 0, Math.PI * 2);
+        ctx.fill();
+        h.y -= h.speed;
+    });
+
+    hearts = hearts.filter(h => h.y > 0);
+}
+
+setInterval(() => {
+    createHeart();
+    drawHearts();
+}, 30);
+
+// 📥 скачать
+function download() {
+    html2canvas(document.getElementById("ticket")).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "massage.png";
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+}
+</script>
+
+<!-- библиотека -->
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+</body>
+</html>
